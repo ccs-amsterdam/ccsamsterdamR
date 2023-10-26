@@ -20,3 +20,13 @@ a \link[tibble:tibble-package]{tibble}
 For a text or a collection of texts stored in a tibble, return a
 list of a keyword in its immediate context.
 }
+\examples{
+text_data <- data.frame(author = c("William Shakespeare", "William Wordsworth"), 
+.                        source = c("Hamlet", "The Tables Turned"),
+                        text = c("To be, or not to be: that is the question.", 
+                                  "Come forth into the light of things, Let Nature be your teacher."))
+                             
+tidy_kwic(text_data, 
+          keyword = "be",
+          window = 6)
+}

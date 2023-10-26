@@ -10,7 +10,7 @@
 #' @return a [tibble][tibble::tibble-package] 
 #' @export
 #' 
-#' @example
+#' @examples
 #' text_data <- data.frame(author = c("William Shakespeare", "William Wordsworth"), 
 #'.                        source = c("Hamlet", "The Tables Turned"),
 #'                         text = c("To be, or not to be: that is the question.", 
