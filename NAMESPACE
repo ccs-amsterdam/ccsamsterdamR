@@ -2,6 +2,7 @@
 
 export(gpt_api)
 export(gpt_sentiment)
+export(gpt_split_data)
 export(gpt_zeroshot)
 export(hf_api)
 export(text_embeddings)
