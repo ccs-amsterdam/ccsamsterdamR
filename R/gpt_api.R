@@ -5,7 +5,7 @@
 #' @param txt A vector with strings representing text. 
 #' @param prompt A string representing the prompt that is sent to the GPT model. Can be NULL. 
 #' @param labels A vector with n values representing the classes the GPT should annotate the texts with. 
-#' @param sep As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to "|", which seems to work well. 
+#' @param sep As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well. 
 #' @param expertise A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."
 #' @param output A string in which you explain the type of output format you want to get. Default is "basic", which returns in standard data frame (tidy tibble format).
 #' @param certainty If TRUE, the output contains a second column with a numerical value expressing GPT's certainty in classifying the text. 
@@ -28,7 +28,7 @@
 gpt_api <- function(txt, 
                     prompt = NULL,
                     labels = NULL,
-                    sep = "|",
+                    sep = " :||: ",
                     expertise = NULL,
                     output = "basic",
                     certainty = FALSE,

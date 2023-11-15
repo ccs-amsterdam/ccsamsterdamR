@@ -8,7 +8,7 @@ gpt_api(
   txt,
   prompt = NULL,
   labels = NULL,
-  sep = "|",
+  sep = " :||: ",
   expertise = NULL,
   output = "basic",
   certainty = FALSE,
@@ -24,7 +24,7 @@ gpt_api(
 
 \item{labels}{A vector with n values representing the classes the GPT should annotate the texts with.}
 
-\item{sep}{As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to "|", which seems to work well.}
+\item{sep}{As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well.}
 
 \item{expertise}{A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."}
 
