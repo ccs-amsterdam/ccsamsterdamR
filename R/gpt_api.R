@@ -128,5 +128,24 @@ gpt_zeroshot <- function(txt,
 
 
 
+#' @export
+gpt_split_data <- function(data, n_per_group = 2) {
+  
+  if((nrow(data) %% 2) == 0) {
+    lst <- data |> 
+      mutate(group = c(rep(c(1:(nrow(data)/n_per_group)), each = n_per_group))) %>% 
+      split(.[, "group"])
+    
+  } else {
+    lst <- data |> 
+      mutate(group = c(c(rep(c(1:(nrow(data)/n_per_group)), each = n_per_group)), nrow(data)/n_per_group+1)) %>% 
+      split(.[, "group"])
+  }
+  
+  return(lst)
+  
+}
+
+
 
 
