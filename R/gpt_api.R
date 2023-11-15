@@ -43,7 +43,7 @@ gpt_api <- function(txt,
   
     # Prompt engineering
     if(is.null(prompt)) {
-      prompt <- paste("Please classify the following texts, which are separated by a ", sep, "as either", paste(labels, collapse = ","), "Only provide one label per text.")
+      prompt <- paste("Please classify the following texts, which are separated by a ", sep, ", as either", paste(labels, collapse = ","), "Only provide one label per text.")
     } else {
       prompt <- paste(prompt, paste(labels, collapse = ","))
     }
