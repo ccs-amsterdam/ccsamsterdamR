@@ -5,14 +5,13 @@
 #' @param txt A vector with strings representing text. 
 #' @param prompt A string representing the prompt that is sent to the GPT model. Can be NULL. 
 #' @param labels A vector with n values representing the classes the GPT should annotate the texts with. 
-#' @param sep As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well. 
+#' @param sep As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well and is unlikely to be part of a text. 
 #' @param expertise A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."
 #' @param output A string in which you explain the type of output format you want to get. Default is "basic", which returns in standard data frame (tidy tibble format).
 #' @param certainty If TRUE, the output contains a second column with a numerical value expressing GPT's certainty in classifying the text. 
 #' @param justification If TRUE, the output contains another column that includes a short justification for the classification. 
 #' @param n_justification Maxium length of the justification in words. Defaults to 20. 
 #' @param model Which model should be used. Defaults to "gpt-3.5-turbo". For a list of available models, see: https://platform.openai.com/docs/models
-#' @param ... further parameters that to extract
 #'
 #' @examples
 #' \dontrun{
@@ -22,7 +21,8 @@
 #'          "Come forth into the light of things, Let Nature be your teacher.")
 #' 
 #' gpt_api(txt = text, 
-#'         labels = c("Poetry", "Politics", "Science"))
+#'         labels = c("Poetry", "Politics", "Science"),
+#'         temperature = 2)
 #' }
 #' @export
 gpt_api <- function(txt, 
@@ -34,7 +34,9 @@ gpt_api <- function(txt,
                     certainty = FALSE,
                     justification = FALSE,
                     n_justification = 20,
-                    model = "gpt-3.5-turbo") {
+                    model = "gpt-3.5-turbo",
+                    temperature = 1,
+                    top_p = 1) {
   
     require(openai)
     require(tidyverse)
@@ -82,7 +84,9 @@ gpt_api <- function(txt,
           "role" = "user",
           "content" = paste(txt, collapse = "|")
         )
-      )
+      ),
+      temperature = temperature,
+      top_p = top_p
     )
     
     if(output == "basic") {

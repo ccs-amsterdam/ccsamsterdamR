@@ -14,7 +14,9 @@ gpt_api(
   certainty = FALSE,
   justification = FALSE,
   n_justification = 20,
-  model = "gpt-3.5-turbo"
+  model = "gpt-3.5-turbo",
+  temperature = 1,
+  top_p = 1
 )
 }
 \arguments{
@@ -24,7 +26,7 @@ gpt_api(
 
 \item{labels}{A vector with n values representing the classes the GPT should annotate the texts with.}
 
-\item{sep}{As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well.}
+\item{sep}{As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well and is unlikely to be part of a text.}
 
 \item{expertise}{A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."}
 
@@ -37,8 +39,6 @@ gpt_api(
 \item{n_justification}{Maxium length of the justification in words. Defaults to 20.}
 
 \item{model}{Which model should be used. Defaults to "gpt-3.5-turbo". For a list of available models, see: https://platform.openai.com/docs/models}
-
-\item{...}{further parameters that to extract}
 }
 \description{
 Allows to access OPEN AI's GPT-models and run typical text analysis prompts using zero-shot classification.
@@ -51,6 +51,7 @@ text = c("To be, or not to be: that is the question.",
          "Come forth into the light of things, Let Nature be your teacher.")
 
 gpt_api(txt = text, 
-        labels = c("Poetry", "Politics", "Science"))
+        labels = c("Poetry", "Politics", "Science"),
+        temperature = 2)
 }
 }
