@@ -21,7 +21,8 @@ Allows to access the Huggingface API and run typical text analysis prompts with 
 Sys.setenv(HF_API_TOKEN = "XXX") # Provide access token, if not only very limited rates are available
 
 text = c("To be, or not to be: that is the question.", 
-         "Come forth into the light of things, Let Nature be your teacher.")
+         "An atom is a particle that consists of a nucleus of protons and neutrons surrounded by an electromagnetically-bound cloud of electrons.",
+         "Senate passes stopgap bill to avert government shutdown.")
 
 hf_api(inputs = text, 
        url = "https://api-inference.huggingface.co/models/MoritzLaurer/deberta-v3-large-zeroshot-v1", 
