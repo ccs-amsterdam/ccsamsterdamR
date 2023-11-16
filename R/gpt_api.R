@@ -18,17 +18,17 @@
 #' Sys.setenv(OPENAI_API_KEY = 'XXX') # Provide access token, otherwise, it won't work
 #' 
 #' text = c("To be, or not to be: that is the question.", 
-#'          "Come forth into the light of things, Let Nature be your teacher.")
+#'          "An atom is a particle that consists of a nucleus of protons and neutrons surrounded by an electromagnetically-bound cloud of electrons.",
+#'          "Senate passes stopgap bill to avert government shutdown.")
 #' 
 #' gpt_api(txt = text, 
-#'         labels = c("Poetry", "Politics", "Science"),
-#'         temperature = 2)
+#'         labels = c("Poetry", "Politics", "Physics"))
 #' }
 #' @export
 gpt_api <- function(txt, 
                     prompt = NULL,
                     labels = NULL,
-                    sep = " :||: ",
+                    sep = "|:||:|",
                     expertise = NULL,
                     output = "basic",
                     certainty = FALSE,
@@ -43,7 +43,7 @@ gpt_api <- function(txt,
   
     # Prompt engineering
     if(is.null(prompt)) {
-      prompt <- paste("Please classify the following texts, which are separated by a ", sep, ", as either", paste(labels, collapse = ","), "Only provide one label per text.")
+      prompt <- paste("Please classify the following texts, which are separated by a  ", sep, ", as either", paste(labels, collapse = ","), "Only provide one label per text.")
     } else {
       prompt <- paste(prompt, paste(labels, collapse = ","))
     }
@@ -63,14 +63,11 @@ gpt_api <- function(txt,
       prompt <- paste(prompt, "A second column called 'certainty' contains a probability score reflecting your certainty in the choice (ranging from 0 to 1).")
     }
   
-    if(isTRUE(justification) & isTRUE(certainty)) {
-      prompt <- paste(prompt, "In a third column called 'justification', you provide a short justification or explanation for your choice. 
-                               Keep it short and use at maximum", n_justification, "words.")
-    } else if(isTRUE(justification) & isFALSE(certainty)) {
-      prompt <- paste(prompt, "In a second column called 'justification' you provide a short justification or explanation for your choice. 
-                               Keep it short and use at maximum", n_justification, "words.")
+    if(isTRUE(justification)) {
+      prompt <- paste(prompt, "In another column called 'justification', you provide a short justification or explanation for your choice. 
+                               Keep it short and use at maximum", n_justification, "words. But explain your choice, don't just summarize the text.")
     } else {
-      prompt <- paste(prompt, "Do not include any other columns next to the labels column.")
+      prompt <- paste(prompt, "Do not include any other columns next to the 'labels' column.")
     }
   
     response <- create_chat_completion(
@@ -82,7 +79,7 @@ gpt_api <- function(txt,
           ),
         list(
           "role" = "user",
-          "content" = paste(txt, collapse = "|")
+          "content" = paste(txt, collapse = sep)
         )
       ),
       temperature = temperature,
@@ -145,7 +142,6 @@ gpt_split_data <- function(data, n_per_group = 2) {
   return(lst)
   
 }
-
 
 
 

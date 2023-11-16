@@ -8,7 +8,7 @@ gpt_api(
   txt,
   prompt = NULL,
   labels = NULL,
-  sep = " :||: ",
+  sep = "|:||:|",
   expertise = NULL,
   output = "basic",
   certainty = FALSE,
@@ -48,10 +48,10 @@ Allows to access OPEN AI's GPT-models and run typical text analysis prompts usin
 Sys.setenv(OPENAI_API_KEY = 'XXX') # Provide access token, otherwise, it won't work
 
 text = c("To be, or not to be: that is the question.", 
-         "Come forth into the light of things, Let Nature be your teacher.")
+         "An atom is a particle that consists of a nucleus of protons and neutrons surrounded by an electromagnetically-bound cloud of electrons.",
+         "Senate passes stopgap bill to avert government shutdown.")
 
 gpt_api(txt = text, 
-        labels = c("Poetry", "Politics", "Science"),
-        temperature = 2)
+        labels = c("Poetry", "Politics", "Physics"))
 }
 }
