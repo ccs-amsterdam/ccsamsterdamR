@@ -6,31 +6,25 @@
 \usage{
 gpt_api(
   txt,
-  prompt = NULL,
+  config = NULL,
   labels = NULL,
-  sep = "|:||:|",
+  sep = "\\n",
   expertise = NULL,
-  output = "basic",
   certainty = FALSE,
   justification = FALSE,
   n_justification = 20,
   model = "gpt-3.5-turbo",
-  temperature = 1,
-  top_p = 1
+  ...
 )
 }
 \arguments{
 \item{txt}{A vector with strings representing text.}
-
-\item{prompt}{A string representing the prompt that is sent to the GPT model. Can be NULL.}
 
 \item{labels}{A vector with n values representing the classes the GPT should annotate the texts with.}
 
 \item{sep}{As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well and is unlikely to be part of a text.}
 
 \item{expertise}{A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."}
-
-\item{output}{A string in which you explain the type of output format you want to get. Default is "basic", which returns in standard data frame (tidy tibble format).}
 
 \item{certainty}{If TRUE, the output contains a second column with a numerical value expressing GPT's certainty in classifying the text.}
 
@@ -39,6 +33,10 @@ gpt_api(
 \item{n_justification}{Maxium length of the justification in words. Defaults to 20.}
 
 \item{model}{Which model should be used. Defaults to "gpt-3.5-turbo". For a list of available models, see: https://platform.openai.com/docs/models}
+
+\item{prompt}{A string representing the prompt that is sent to the GPT model. Can be NULL.}
+
+\item{output}{A string in which you explain the type of output format you want to get. Default is "basic", which returns in standard data frame (tidy tibble format).}
 }
 \description{
 Allows to access OPEN AI's GPT-models and run typical text analysis prompts using zero-shot classification.
@@ -53,5 +51,12 @@ text = c("To be, or not to be: that is the question.",
 
 gpt_api(txt = text, 
         labels = c("Poetry", "Politics", "Physics"))
+
+
+text2 = c("This movie sucks. I really don't like it. Boring as hell, and no story whatsoever!", 
+          "This film really struck a nerve for me. Fantastic acting too",
+          "This movie is about a physicist who invented the atomic bomb.")
+
+gpt_sentiment(txt = text2)
 }
 }

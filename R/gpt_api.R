@@ -23,82 +23,59 @@
 #' 
 #' gpt_api(txt = text, 
 #'         labels = c("Poetry", "Politics", "Physics"))
+#'
+#'
+#' text2 = c("This movie sucks. I really don't like it. Boring as hell, and no story whatsoever!", 
+#'           "This film really struck a nerve for me. Fantastic acting too",
+#'           "This movie is about a physicist who invented the atomic bomb.")
+#'
+#' gpt_sentiment(txt = text2)
 #' }
 #' @export
 gpt_api <- function(txt, 
-                    prompt = NULL,
+                    config = NULL,
                     labels = NULL,
-                    sep = "|:||:|",
+                    sep = "\n",
                     expertise = NULL,
-                    output = "basic",
                     certainty = FALSE,
                     justification = FALSE,
                     n_justification = 20,
                     model = "gpt-3.5-turbo",
-                    temperature = 1,
-                    top_p = 1) {
+                    ...) {
   
-    require(openai)
-    require(tidyverse)
+  if(is.null(config) & !is.null(labels)) {
+    config <- paste("You classify the texts given to you, which are separated by a", sep, "as either", paste(labels, collapse = ","), 
+                    "Provide one label per text. As output, provide a data frame in csv format that can be read using 'read_csv' in R.
+                     The first column named 'labels' should contain the classifications. 
+                     The data set MUST include a label for all original texts. 
+                     You ALWAYS classifiy all of the original input texts and never remove any classification from your output!")
+  }
   
-    # Prompt engineering
-    if(is.null(prompt)) {
-      prompt <- paste("Please classify the following texts, which are separated by a  ", sep, ", as either", paste(labels, collapse = ","), "Only provide one label per text.")
-    } else {
-      prompt <- paste(prompt, paste(labels, collapse = ","))
-    }
+  if(!is.null(expertise)) {
+    config <- paste(expertise, config)
+  }
   
-    if(output == "basic") {
-      prompt <- paste(prompt, "As output, provide a data frame in csv format that can be read using 'read_csv' in R (the separator should be ','). 
-                               The first column named 'labels' should contain the classifications.")
-    } else {
-      prompt <- paste(prompt, output)
-    }
+  if(isTRUE(certainty)) {
+    config <- paste(config, "Provide the probability for your choice per text in a column called 'prob'.")
+  }
   
-    if(is.null(expertise)) {
-      prompt <- paste(expertise, prompt)
-    }
+  if(isTRUE(justification)) {
+    config <- paste(config, "Provide a justification for your choice in a column 'expl'.  
+                               Use ", n_justification, "words. But explain your choice, don't summarize the text. Do not uses commas in your explanation.")
+  } 
   
-    if(isTRUE(certainty)) {
-      prompt <- paste(prompt, "A second column called 'certainty' contains a probability score reflecting your certainty in the choice (ranging from 0 to 1).")
-    }
+  require(askgpt, quietly = T)
   
-    if(isTRUE(justification)) {
-      prompt <- paste(prompt, "In another column called 'justification', you provide a short justification or explanation for your choice. 
-                               Keep it short and use at maximum", n_justification, "words. But explain your choice, don't just summarize the text.")
-    } else {
-      prompt <- paste(prompt, "Do not include any other columns next to the 'labels' column.")
-    }
+  res <- chat_api(prompt = paste(txt, collapse = sep), 
+                  model = model, config = config, ... )
+  read_csv(parse_response(res))
   
-    response <- create_chat_completion(
-      model = model,
-      messages = list(
-        list(
-          "role" = "system",
-          "content" = prompt
-          ),
-        list(
-          "role" = "user",
-          "content" = paste(txt, collapse = sep)
-        )
-      ),
-      temperature = temperature,
-      top_p = top_p
-    )
-    
-    if(output == "basic") {
-      output <- read_csv(response$choices$message.content)
-    } else {
-      outpu <- response$choices$message.content
-    }
-    
-    return(output)
 }
 
 
 #' @export
 gpt_sentiment <- function(txt, 
-                          expertise = "You are an expert in classifying the sentiment of a text.",
+                          expertise = "You are an expert in classifying the sentiment of a text. ",
                           sentiment = c("positive", "neutral", "negative"),
                           model = "gpt-3.5-turbo",
                           ...) {
@@ -142,6 +119,5 @@ gpt_split_data <- function(data, n_per_group = 2) {
   return(lst)
   
 }
-
 
 
