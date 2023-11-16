@@ -6,19 +6,20 @@
 \usage{
 gpt_api(
   txt,
-  config = NULL,
+  prompt = NULL,
   labels = NULL,
-  sep = "\\n",
+  sep = "|:||:|",
   expertise = NULL,
   certainty = FALSE,
   justification = FALSE,
-  n_justification = 20,
   model = "gpt-3.5-turbo",
   ...
 )
 }
 \arguments{
 \item{txt}{A vector with strings representing text.}
+
+\item{prompt}{A string representing the prompt that is sent to the GPT model. Can be NULL.}
 
 \item{labels}{A vector with n values representing the classes the GPT should annotate the texts with.}
 
@@ -30,13 +31,11 @@ gpt_api(
 
 \item{justification}{If TRUE, the output contains another column that includes a short justification for the classification.}
 
-\item{n_justification}{Maxium length of the justification in words. Defaults to 20.}
-
 \item{model}{Which model should be used. Defaults to "gpt-3.5-turbo". For a list of available models, see: https://platform.openai.com/docs/models}
 
-\item{prompt}{A string representing the prompt that is sent to the GPT model. Can be NULL.}
-
 \item{output}{A string in which you explain the type of output format you want to get. Default is "basic", which returns in standard data frame (tidy tibble format).}
+
+\item{n_justification}{Maxium length of the justification in words. Defaults to 20.}
 }
 \description{
 Allows to access OPEN AI's GPT-models and run typical text analysis prompts using zero-shot classification.

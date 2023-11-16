@@ -33,49 +33,68 @@
 #' }
 #' @export
 gpt_api <- function(txt, 
-                    config = NULL,
-                    labels = NULL,
-                    sep = "\n",
-                    expertise = NULL,
-                    certainty = FALSE,
-                    justification = FALSE,
-                    n_justification = 20,
-                    model = "gpt-3.5-turbo",
-                    ...) {
+                     prompt = NULL,
+                     labels = NULL,
+                     sep = "|:||:|",
+                     expertise = NULL,
+                     certainty = FALSE,
+                     justification = FALSE,
+                     model = "gpt-3.5-turbo",
+                     ...) {
   
-  if(is.null(config) & !is.null(labels)) {
-    config <- paste("You classify the texts given to you, which are separated by a", sep, "as either", paste(labels, collapse = ","), 
+  require(openai)
+  require(tidyverse)
+  
+  # Prompt engineering
+  if(is.null(prompt)) {
+    prompt <- paste("You classify the texts given to you, which are separated by a", sep, "as either", paste(labels, collapse = ","), 
                     "Provide one label per text. As output, provide a data frame in csv format that can be read using 'read_csv' in R.
-                     The first column named 'labels' should contain the classifications. 
-                     The data set MUST include a label for all original texts. 
-                     You ALWAYS classifiy all of the original input texts and never remove any classification from your output!")
+                     The first column labelled 'labels' should contain the classifications.")
   }
   
   if(!is.null(expertise)) {
-    config <- paste(expertise, config)
+    prompt <- paste(expertise, prompt)
   }
   
   if(isTRUE(certainty)) {
-    config <- paste(config, "Provide the probability for your choice per text in a column called 'prob'.")
+    prompt <- paste(prompt, "Provide the probability for your choice per text in another column called 'certainty'.")
   }
   
   if(isTRUE(justification)) {
-    config <- paste(config, "Provide a justification for your choice in a column 'expl'.  
-                               Use ", n_justification, "words. But explain your choice, don't summarize the text. Do not uses commas in your explanation.")
+    prompt <- paste(prompt, "Provide a justification for your choice in another column called 'justification'.  
+                             Use only 15 words for this justification.")
   } 
   
-  require(askgpt, quietly = T)
+  prompt <- paste(prompt, "The data set MUST include one label for ALL original texts. NEVER distinguish texts based on something else than the delimiter", sep, "
+                           You ALWAYS classifiy all of the original input texts and never remove any classification from your output!")
   
-  res <- chat_api(prompt = paste(txt, collapse = sep), 
-                  model = model, config = config, ... )
-  read_csv(parse_response(res))
   
+  response <- create_chat_completion(
+    model = model,
+    messages = list(
+      list(
+        "role" = "system",
+        "content" = prompt
+      ),
+      list(
+        "role" = "user",
+        "content" = paste(txt, collapse = sep)
+      )
+    ),
+    ...
+  )
+  
+  
+  output <- read_csv(response$choices$message.content)
+  
+  return(output)
 }
+
 
 
 #' @export
 gpt_sentiment <- function(txt, 
-                          expertise = "You are an expert in classifying the sentiment of a text. ",
+                          expertise = "You are an expert in classifying the sentiment of a text.",
                           sentiment = c("positive", "neutral", "negative"),
                           model = "gpt-3.5-turbo",
                           ...) {
@@ -119,5 +138,6 @@ gpt_split_data <- function(data, n_per_group = 2) {
   return(lst)
   
 }
+
 
 
