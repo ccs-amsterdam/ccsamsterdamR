@@ -44,18 +44,22 @@ Allows to access OPEN AI's GPT-models and run typical text analysis prompts usin
 \dontrun{
 Sys.setenv(OPENAI_API_KEY = 'XXX') # Provide access token, otherwise, it won't work
 
-text = c("To be, or not to be: that is the question.", 
-         "An atom is a particle that consists of a nucleus of protons and neutrons surrounded by an electromagnetically-bound cloud of electrons.",
-         "Senate passes stopgap bill to avert government shutdown.")
+corpus <- tibble::tibble(
+   id = c(1:3),
+   text =  c("To be, or not to be: that is the question.", 
+             "An atom is a particle that consists of a nucleus of protons and neutrons surrounded by an electromagnetically-bound cloud of electrons.",
+             "Senate passes stopgap bill to avert government shutdown."))
 
-gpt_api(txt = text, 
+gpt_api(txt = corpus, 
         labels = c("Poetry", "Politics", "Physics"))
 
 
-text2 = c("This movie sucks. I really don't like it. Boring as hell, and no story whatsoever!", 
-          "This film really struck a nerve for me. Fantastic acting too",
-          "This movie is about a physicist who invented the atomic bomb.")
+corpus2 <- tibble::tibble(
+   id = c(1:3),
+   text = c("This movie sucks. I really don't like it. Boring as hell, and no story whatsoever!", 
+            "This film really struck a nerve for me. Fantastic acting too",
+            "This movie is about a physicist who invented the atomic bomb."))
 
-gpt_sentiment(txt = text2)
+gpt_sentiment(txt = corpus2)
 }
 }

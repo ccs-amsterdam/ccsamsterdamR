@@ -4,7 +4,7 @@
 \alias{hf_api}
 \title{Wrapper for the Huggingface Inference API}
 \usage{
-hf_api(inputs, url, ...)
+hf_api(inputs = NULL, url = NULL, filename = NULL, ...)
 }
 \arguments{
 \item{inputs}{A vector with strings representing text.}

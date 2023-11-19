@@ -17,19 +17,23 @@
 #' \dontrun{
 #' Sys.setenv(OPENAI_API_KEY = 'XXX') # Provide access token, otherwise, it won't work
 #' 
-#' text = c("To be, or not to be: that is the question.", 
-#'          "An atom is a particle that consists of a nucleus of protons and neutrons surrounded by an electromagnetically-bound cloud of electrons.",
-#'          "Senate passes stopgap bill to avert government shutdown.")
+#' corpus <- tibble::tibble(
+#'    id = c(1:3),
+#'    text =  c("To be, or not to be: that is the question.", 
+#'              "An atom is a particle that consists of a nucleus of protons and neutrons surrounded by an electromagnetically-bound cloud of electrons.",
+#'              "Senate passes stopgap bill to avert government shutdown."))
 #' 
-#' gpt_api(txt = text, 
+#' gpt_api(txt = corpus, 
 #'         labels = c("Poetry", "Politics", "Physics"))
 #'
 #'
-#' text2 = c("This movie sucks. I really don't like it. Boring as hell, and no story whatsoever!", 
-#'           "This film really struck a nerve for me. Fantastic acting too",
-#'           "This movie is about a physicist who invented the atomic bomb.")
+#' corpus2 <- tibble::tibble(
+#'    id = c(1:3),
+#'    text = c("This movie sucks. I really don't like it. Boring as hell, and no story whatsoever!", 
+#'             "This film really struck a nerve for me. Fantastic acting too",
+#'             "This movie is about a physicist who invented the atomic bomb."))
 #'
-#' gpt_sentiment(txt = text2)
+#' gpt_sentiment(txt = corpus2)
 #' }
 #' @export
 gpt_api <- function(txt, 
@@ -42,14 +46,18 @@ gpt_api <- function(txt,
                      model = "gpt-3.5-turbo",
                      ...) {
   
+  txt <- format_delim(txt, delim = ",")
+  
   require(openai)
   require(tidyverse)
   
   # Prompt engineering
   if(is.null(prompt)) {
-    prompt <- paste("You classify the texts given to you, which are separated by a", sep, "as either", paste(labels, collapse = ","), 
-                    "Provide one label per text. As output, provide a data frame in csv format that can be read using 'read_csv' in R.
-                     The first column labelled 'labels' should contain the classifications.")
+    prompt <- paste("You classify the texts given to you, which are in a csv-formatted string. The first colum is the text id, the second is the actual text.
+                    Classify them as either", paste(labels, collapse = ","), "
+                    Provide one label per text. As output, provide a data frame in csv format that can be read using 'read_csv' in R. Do
+                    not include anything else in the output, only the string that represents the data frame in csv format!
+                    The first column labelled 'id' contains the providd text id's. The second called 'labels' should contain the classifications.")
   }
   
   if(!is.null(expertise)) {

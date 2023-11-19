@@ -19,7 +19,7 @@
 #'        parameters = list(candidate_labels = c("Poetry", "Politics", "Science")))
 #' }
 #' @export
-hf_api <- function(inputs, url, ...){
+hf_api = function(inputs = NULL, url = NULL, filename = NULL, ...){
   
   # Code adopted from: https://github.com/ccsmainz/hfapi/blob/main/R/hf_api.R
   # Original by Michael Scharkow
