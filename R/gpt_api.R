@@ -5,13 +5,12 @@
 #' @param txt A vector with strings representing text. 
 #' @param prompt A string representing the prompt that is sent to the GPT model. Can be NULL. 
 #' @param labels A vector with n values representing the classes the GPT should annotate the texts with. 
-#' @param sep As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " :||: ", which seems to work well and is unlikely to be part of a text. 
+#' @param sep As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " |:||:| ", which seems to work well and is unlikely to be part of a text. 
 #' @param expertise A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."
-#' @param output A string in which you explain the type of output format you want to get. Default is "basic", which returns in standard data frame (tidy tibble format).
 #' @param certainty If TRUE, the output contains a second column with a numerical value expressing GPT's certainty in classifying the text. 
 #' @param justification If TRUE, the output contains another column that includes a short justification for the classification. 
-#' @param n_justification Maxium length of the justification in words. Defaults to 20. 
 #' @param model Which model should be used. Defaults to "gpt-3.5-turbo". For a list of available models, see: https://platform.openai.com/docs/models
+#' @param ... Other arguments passt to `openai::create_chat_completion()`.
 #'
 #' @examples
 #' \dontrun{
@@ -37,14 +36,14 @@
 #' }
 #' @export
 gpt_api <- function(txt, 
-                     prompt = NULL,
-                     labels = NULL,
-                     sep = "|:||:|",
-                     expertise = NULL,
-                     certainty = FALSE,
-                     justification = FALSE,
-                     model = "gpt-3.5-turbo",
-                     ...) {
+                    prompt = NULL,
+                    labels = NULL,
+                    sep = "|:||:|",
+                    expertise = NULL,
+                    certainty = FALSE,
+                    justification = FALSE,
+                    model = "gpt-3.5-turbo",
+                    ...) {
   
   txt <- format_delim(txt, delim = ",")
   
@@ -54,10 +53,9 @@ gpt_api <- function(txt,
   # Prompt engineering
   if(is.null(prompt)) {
     prompt <- paste("You classify the texts given to you, which are in a csv-formatted string. The first colum is the text id, the second is the actual text.
-                    Classify them as either", paste(labels, collapse = ","), "
-                    Provide one label per text. As output, provide a data frame in csv format that can be read using 'read_csv' in R. Do
-                    not include anything else in the output, only the string that represents the data frame in csv format!
-                    The first column labelled 'id' contains the providd text id's. The second called 'labels' should contain the classifications.")
+                    Classify them as either", paste(labels, collapse = ","), ". Provide one label per text. As output, provide a data frame in csv format that 
+                    can be read using 'read_csv' in R. Do not include anything else in the output, only the string that represents the data frame in csv format!
+                    The first column labelled 'id' contains the provided text id's. The second called 'labels' should contain the classifications.")
   }
   
   if(!is.null(expertise)) {
@@ -86,7 +84,7 @@ gpt_api <- function(txt,
       ),
       list(
         "role" = "user",
-        "content" = paste(txt, collapse = sep)
+        "content" = txt
       )
     ),
     ...
