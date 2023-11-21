@@ -2,7 +2,7 @@
 #'
 #' Allows to access OPEN AI's GPT-models and run typical text analysis prompts using zero-shot classification.
 #' 
-#' @param txt A vector with strings representing text. 
+#' @param txt A data frame that contains a column with a text id and a column valled text that contains a vector with strings representing text. 
 #' @param prompt A string representing the prompt that is sent to the GPT model. Can be NULL. 
 #' @param labels A vector with n values representing the classes the GPT should annotate the texts with. 
 #' @param sep As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " |:||:| ", which seems to work well and is unlikely to be part of a text. 
