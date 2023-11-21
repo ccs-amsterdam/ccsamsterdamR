@@ -24,7 +24,7 @@ hf_api = function(inputs = NULL, url = NULL, filename = NULL, ...){
   # Code adopted from: https://github.com/ccsmainz/hfapi/blob/main/R/hf_api.R
   # Original by Michael Scharkow
   
-  require(httr);require(jsonlite)
+  require(httr);require(jsonlite); require(tibble)
   hf_opts = list()
   if (Sys.getenv("HF_API_TOKEN") != "") {
     config = add_headers(Authorization = paste("Bearer", Sys.getenv("HF_API_TOKEN")))
@@ -55,18 +55,18 @@ hf_api = function(inputs = NULL, url = NULL, filename = NULL, ...){
 #' @export
 hf_embeddings = function(txt, url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L12-v2"){
   hf_api(inputs = txt, url = url) |> 
-    as.tibble()
+    tibble::as.tibble()
 }
 
 #' @export
 hf_zeroshot = function(txt, labels, url = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"){
   hf_api(inputs = txt, url = url, parameters = list(candidate_labels = labels)) |> 
-    as_tibble()
+    tibble::as_tibble()
 }
 
 
 #' @export
 hf_image_classification = function(filename, url = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"){
   hf_api(filename = filename, url = url) %>%
-    as_tibble()
+    tibble::as_tibble()
 }
