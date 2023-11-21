@@ -8,7 +8,6 @@ gpt_api(
   txt,
   prompt = NULL,
   labels = NULL,
-  sep = "|:||:|",
   expertise = NULL,
   certainty = FALSE,
   justification = FALSE,
@@ -17,13 +16,11 @@ gpt_api(
 )
 }
 \arguments{
-\item{txt}{A vector with strings representing text.}
+\item{txt}{A data frame that contains a column with a text id and a column valled text that contains a vector with strings representing text.}
 
 \item{prompt}{A string representing the prompt that is sent to the GPT model. Can be NULL.}
 
 \item{labels}{A vector with n values representing the classes the GPT should annotate the texts with.}
-
-\item{sep}{As GPT only text a string, the labels provided in the vector are collapsed into one string separated by this character. Defaults to " |:||:| ", which seems to work well and is unlikely to be part of a text.}
 
 \item{expertise}{A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."}
 
