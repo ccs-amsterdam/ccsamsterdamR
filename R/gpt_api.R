@@ -2,7 +2,7 @@
 #'
 #' Allows to access OPEN AI's GPT-models and run typical text analysis prompts using zero-shot classification.
 #' 
-#' @param txt A data frame that contains a column with a text id and a column valled text that contains a vector with strings representing text. 
+#' @param txt A data frame with text id and text.
 #' @param prompt A string representing the prompt that is sent to the GPT model. Can be NULL. 
 #' @param labels A vector with n values representing the classes the GPT should annotate the texts with. 
 #' @param expertise A string that will be added to the prompt up front that could help to "prompt engineer" the model to do the task better, e.g., "You are an expert identifying topics from newspaper articles."
@@ -69,7 +69,7 @@ gpt_api <- function(txt,
                              Use only 15 words for this justification.")
   } 
   
-  prompt <- paste(prompt, "The data set MUST include one label for ALL original texts. NEVER distinguish texts based on something else than the delimiter", sep, "
+  prompt <- paste(prompt, "The data set MUST include one label for ALL original texts. NEVER distinguish texts based on something else than the delimiter.
                            You ALWAYS classifiy all of the original input texts and never remove any classification from your output!")
   
   
@@ -128,20 +128,22 @@ gpt_zeroshot <- function(txt,
 #' @export
 gpt_split_data <- function(data, n_per_group = 2) {
   
+  n_groups <- floor(nrow(data)/n_per_group)
+  rest <- nrow(data)-n_groups*n_per_group
+
   if((nrow(data) %% 2) == 0) {
     lst <- data |> 
-      mutate(group = c(rep(c(1:(nrow(data)/n_per_group)), each = n_per_group))) %>% 
+      mutate(group = c(rep(c(1:n_groups), each = n_per_group))) %>% 
       split(.[, "group"])
     
   } else {
     lst <- data |> 
-      mutate(group = c(c(rep(c(1:(nrow(data)/n_per_group)), each = n_per_group)), nrow(data)/n_per_group+1)) %>% 
+      mutate(group = c(rep(c(1:n_groups), each = n_per_group), rep(c(n_groups+1), each = rest))) %>% 
       split(.[, "group"])
   }
   
   return(lst)
   
 }
-
 
 

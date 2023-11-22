@@ -16,7 +16,7 @@ gpt_api(
 )
 }
 \arguments{
-\item{txt}{A data frame that contains a column with a text id and a column valled text that contains a vector with strings representing text.}
+\item{txt}{A data frame with text id and text.}
 
 \item{prompt}{A string representing the prompt that is sent to the GPT model. Can be NULL.}
 
